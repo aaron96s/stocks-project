@@ -1,0 +1,111 @@
+Sub Stocks()
+
+'Make Column Titles
+For Each ws In Worksheets
+ws.Cells(1, 9).Value = "Ticker"
+ws.Cells(1, 10).Value = "Yearly Change"
+ws.Cells(1, 11).Value = "Percent Change"
+ws.Cells(1, 12).Value = "Total Stock Volume"
+
+'AutoFit Columns
+ws.Select
+Cells.EntireColumn.AutoFit
+
+
+'Create Variables
+
+
+Dim Ticker As String
+Dim Total As Double
+Total = 0
+Dim OpenPrice As Double
+OpenPrice = 0
+Dim ClosePrice As Double
+ClosePrice = 0
+Dim YearlyChange As Double
+YearlyChange = 0
+Dim PercentChange As Double
+PercentChange = 0
+
+'Starting Value for Summary Table
+Dim SummaryRow As Long
+SummaryRow = 2
+
+Dim LastRow As Long
+LastRow = ws.Cells(Rows.Count, 1).End(xlUp).Row
+
+'Starting Value for Opening Price
+OpenPrice = ws.Cells(2, 3).Value
+
+For i = 2 To LastRow
+
+'Finds last ticker
+If ws.Cells(i + 1, 1).Value <> ws.Cells(i, 1).Value Then
+
+'Starting Value Ticker
+Ticker = ws.Cells(i, 1).Value
+
+ClosePrice = ws.Cells(i, 6).Value
+YearlyChange = ClosePrice - OpenPrice
+
+'Zero Value
+If OpenPrice <> 0 Then
+PercentChange = (YearlyChange / OpenPrice) * 100
+
+End If
+
+'Adds to Total
+Total = Total + ws.Cells(i, 7).Value
+
+ws.Range("I" & SummaryRow).Value = Ticker
+ws.Range("J" & SummaryRow).Value = YearlyChange
+
+
+'Assisgns Color to Column J
+If (YearlyChange) > 0 Then
+ws.Range("J" & SummaryRow).Interior.ColorIndex = 4
+ElseIf (YearlyChange <= 0) Then
+ws.Range("J" & SummaryRow).Interior.ColorIndex = 3
+
+End If
+'Print Values on SummaryTable
+ws.Range("K" & SummaryRow).Value = (CStr(PercentChange) & "%")
+ws.Range("L" & SummaryRow).Value = Total
+SummaryRow = SummaryRow + 1
+
+OpenPrice = ws.Cells(i + 1, 3).Value
+
+YearlyChange = 0
+Total = 0
+
+Else
+
+'Keeps adding if no new ticker is found
+Total = Total + ws.Cells(i, 7).Value
+
+End If
+
+Next i
+
+Next ws
+
+
+
+End Sub
+
+
+
+
+
+
+   
+    
+
+
+
+
+
+
+
+
+
